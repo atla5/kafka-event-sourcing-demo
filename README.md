@@ -56,3 +56,41 @@ in the `event-sourced` model, **US** only has to manage the publication of the i
 - you must serve and maintain a separate system for passing and responding to message queues 
 - you have to manage the growth and coordination of "events" and "topic streams"
 - adds a layer of abstraction that may not be necessary for systems that aren't complex enough to warrant its use
+
+## Usage ## 
+
+Following the [kafka quickstart documentation](https://kafka.apache.org/quickstart):
+
+1. Start Zookeeper server (and keep running)
+``` 
+kafka_2.11-1.0.0$ bin/zookeeper-server-start.sh config/zookeeper.properties
+...
+INFO binding to port 0.0.0.0/0.0.0.0:2181 (org.apache.zookeeper.server.NIOServerCnxnFactory)
+```
+
+2. Start the Kafka server (and keep running)
+```
+kafka_2.11-1.0.0$ bin/kafka-server-start.sh config/server.properties
+...
+INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+```
+
+3. Create a topic
+```
+kafka_2.11-1.0.0$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic topic1
+Created topic "returnOrders".
+```
+
+4. Create producer (on a given topic) and populate with a few lines
+```
+kafka_2.11-1.0.0$ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic returnOrders
+> This is the first message
+> This is the second message
+```
+
+5. Create consumer/s (on the same topic) and watch the lines become updated in turn
+```
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+> This is the first message
+> This is the second message
+```
